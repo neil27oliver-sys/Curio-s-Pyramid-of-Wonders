@@ -6,28 +6,38 @@
   <title>Curio's Pyramid of Wonders</title>
   
   <!-- FAVICON -->
-  <link rel="icon" href="assets/favicon.ico" type="image/png">
-  <!-- Replace the URL above with your generated image link once you have it -->
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     :root { --gold: #f4c542; --blue: #2a7de1; --emerald: #0a9b6b; }
-    body { font-family: 'Comic Sans MS', sans-serif; background: linear-gradient(135deg, #a8e6cf, #d0f4de); margin:0; padding:0; }
-    header { background: var(--blue); color: white; text-align:center; padding:1.5rem; }
+    body { 
+      font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif; 
+      background: linear-gradient(135deg, #a8e6cf, #d0f4de); 
+      margin:0; padding:0; color:#333; 
+    }
+    header { 
+      background: var(--blue); color: white; text-align:center; padding:1.5rem; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
     .container { max-width:1000px; margin:0 auto; padding:20px; }
-    button { background:var(--gold); border:none; padding:14px 28px; font-size:1.1rem; border-radius:15px; cursor:pointer; margin:8px; }
+    button { 
+      background:var(--gold); border:none; padding:14px 28px; 
+      font-size:1.1rem; border-radius:15px; cursor:pointer; margin:8px; transition:0.2s;
+    }
     button:hover { transform:scale(1.08); }
     .pyramid { display:flex; flex-direction:column; align-items:center; margin:30px 0; }
-    .row { display:flex; gap:4px; margin:2px 0; }
+    .row { display:flex; gap:5px; margin:4px 0; flex-wrap:wrap; justify-content:center; }
     .small-pyramid {
       width:42px; height:34px; background:#ff9800;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       display:flex; align-items:center; justify-content:center;
-      color:white; font-size:1rem; font-weight:bold; box-shadow:0 3px 6px rgba(0,0,0,0.2);
+      color:white; font-size:1.1rem; font-weight:bold; box-shadow:0 4px 8px rgba(0,0,0,0.2);
+      margin:2px;
     }
     .completed { background:var(--emerald) !important; }
     .question { background:white; padding:25px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.15); margin:20px 0; }
-    .music-btn { position:fixed; bottom:20px; right:20px; z-index:100; padding:12px 20px; }
+    .music-btn { position:fixed; bottom:20px; right:20px; z-index:100; padding:12px 20px; font-size:1.2rem; }
   </style>
 </head>
 <body>
@@ -45,7 +55,7 @@
 
   <script>
     // ====================== FULL 90 QUESTIONS ======================
-     const allQuestions = [
+       const allQuestions = [
   // ==================== BOOK 1 ====================
   {book:1,story:1,title:"Why Are Coins Round?",summary:"King Croesus got tired of cheaters clipping metal.",q:"Why did he make coins round?",a:["They looked pretty","So people couldn’t easily clip bits off the edges","Because they roll faster"],c:1},
   {book:1,story:2,title:"The Mackintosh Raincoat",summary:"Jungle rubber + Scottish chemistry.",q:"What did Charles Macintosh mix with rubber?",a:["Naphtha from lamp gas","Magic spells","Gold dust"],c:0},
@@ -163,21 +173,19 @@
 
     function playCorrectSound() {
       const audio = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audio.createOscillator(); osc.frequency.value = 800; osc.connect(audio.destination);
-      osc.start(); osc.stop(audio.currentTime + 0.15);
+      const osc = audio.createOscillator(); osc.frequency.value = 800;
+      osc.connect(audio.destination); osc.start(); osc.stop(audio.currentTime + 0.15);
     }
 
     function launchConfetti() { confetti({particleCount:200, spread:80, origin:{y:0.6}}); }
 
-    // FIXED PYRAMID - Now supports 90 pyramids (13 rows)
     function renderPyramid() {
       let html = `<div class="pyramid">`;
       let count = 0;
       const done = totalCompleted();
       for (let r = 1; r <= 13; r++) {
-        const itemsInRow = r < 7 ? r : 13;   // Wider base
         html += `<div class="row">`;
-        for (let i = 0; i < itemsInRow; i++) {
+        for (let i = 0; i < 13; i++) {
           if (count >= 90) break;
           const filled = count < done ? 'completed' : '';
           html += `<div class="small-pyramid ${filled}">${count < done ? '★' : ''}</div>`;
@@ -196,15 +204,15 @@
     }
 
     function showHome() {
-      const done = totalCompleted();
-      let html = `<h2>Welcome back, explorer! 👋</h2>${renderPyramid()}`;
-      if (done === 90) html += `<button onclick="showCertificate()" style="background:#4caf50;font-size:1.3rem;">🏆 Claim Certificate!</button>`;
-      html += `<button onclick="showBooks()" style="font-size:1.2rem;padding:16px;">📚 Choose a Book</button>
-               <button onclick="resetProgress()" style="background:#f44336;">Reset Pyramid</button>`;
-      document.getElementById('app').innerHTML = html;
+      document.getElementById('app').innerHTML = `
+        <h2>Welcome back, explorer! 👋</h2>
+        ${renderPyramid()}
+        <button onclick="showBooks()" style="font-size:1.2rem;padding:16px;">📚 Choose a Book</button>
+        <button onclick="resetProgress()" style="background:#f44336;">Reset Pyramid</button>
+      `;
     }
 
-    function showBooks() { /* same as before */ 
+    function showBooks() {
       let html = `<h2>Choose Your Adventure Book</h2>`;
       const titles = ["Wonders of Everyday Life","Secrets of How Things Move","Magic of Light, Sound & Ideas","Wonders of the Natural World","Amazing Animals We Know","Secrets of Rocks, Minerals & Gems","Food & Kitchen Wonders","Toys, Games & Play","Shapes (Grand Finale)"];
       for (let b = 1; b <= 9; b++) {
@@ -221,7 +229,7 @@
       const qList = allQuestions.filter(q => q.book === bookId);
       const next = (progress[bookId] || 0) + 1;
       if (next > 10) { alert("🌟 Book Complete!"); showHome(); return; }
-      const q = qList[next-1];
+      const q = qList[next-1] || allQuestions[0];
 
       let html = `
         <div class="question">
@@ -246,21 +254,10 @@
         launchConfetti();
         alert("🎉 Correct! +1 Emerald Pyramid!");
       } else {
-        alert("Nice try! Keep exploring ❤️");
+        alert("Nice try! Keep exploring the Cabinet ❤️");
       }
       if (progress[bookId] === 10) launchConfetti();
       showHome();
-    }
-
-    function showCertificate() {
-      document.getElementById('app').innerHTML = `
-        <div style="text-align:center;background:white;padding:40px;border:10px solid gold;border-radius:20px;max-width:600px;margin:40px auto;">
-          <h1>🏆 Certificate of Wonder 🏆</h1>
-          <p>You completed all 90 stories and built the Great Pyramid!</p>
-          <h2>You are an Official Curio Explorer!</h2>
-          <button onclick="window.print()">🖨️ Print Certificate</button>
-        </div>
-        <button onclick="showHome()">← Back</button>`;
     }
 
     function resetProgress() {
@@ -271,7 +268,7 @@
       }
     }
 
-    // Start
+    // Start the game
     showHome();
   </script>
 </body>
