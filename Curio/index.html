@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curio's Pyramid of Wonders</title>
+  
+  <!-- FAVICON -->
+  <link rel="icon" href="assets/favicon.ico" type="image/png">
+  <!-- Replace the URL above with your generated image link once you have it -->
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root { --gold: #f4c542; --blue: #2a7de1; --emerald: #0a9b6b; }
+    body { font-family: 'Comic Sans MS', sans-serif; background: linear-gradient(135deg, #a8e6cf, #d0f4de); margin:0; padding:0; }
+    header { background: var(--blue); color: white; text-align:center; padding:1.5rem; }
+    .container { max-width:1000px; margin:0 auto; padding:20px; }
+    button { background:var(--gold); border:none; padding:14px 28px; font-size:1.1rem; border-radius:15px; cursor:pointer; margin:8px; }
+    button:hover { transform:scale(1.08); }
+    .pyramid { display:flex; flex-direction:column; align-items:center; margin:30px 0; }
+    .row { display:flex; gap:4px; margin:2px 0; }
+    .small-pyramid {
+      width:42px; height:34px; background:#ff9800;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      display:flex; align-items:center; justify-content:center;
+      color:white; font-size:1rem; font-weight:bold; box-shadow:0 3px 6px rgba(0,0,0,0.2);
+    }
+    .completed { background:var(--emerald) !important; }
+    .question { background:white; padding:25px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.15); margin:20px 0; }
+    .music-btn { position:fixed; bottom:20px; right:20px; z-index:100; padding:12px 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔥 Curio's Pyramid of Wonders 🔥</h1>
+    <p>90 Stories • 90 Emerald Pyramids • One Giant Adventure!</p>
+  </header>
+
+  <div class="container" id="app"></div>
+
+  <button class="music-btn" onclick="toggleMusic()">🎵 Music</button>
+  <audio id="bgMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // ====================== FULL 90 QUESTIONS ======================
+     const allQuestions = [
+  // ==================== BOOK 1 ====================
+  {book:1,story:1,title:"Why Are Coins Round?",summary:"King Croesus got tired of cheaters clipping metal.",q:"Why did he make coins round?",a:["They looked pretty","So people couldn’t easily clip bits off the edges","Because they roll faster"],c:1},
+  {book:1,story:2,title:"The Mackintosh Raincoat",summary:"Jungle rubber + Scottish chemistry.",q:"What did Charles Macintosh mix with rubber?",a:["Naphtha from lamp gas","Magic spells","Gold dust"],c:0},
+  {book:1,story:3,title:"Where Does the Pencil Come From?",summary:"Graphite from Borrowdale.",q:"What did shepherds first use graphite for?",a:["Writing letters","Marking sheep","Drawing maps"],c:1},
+  {book:1,story:4,title:"The Story of Jeans",summary:"Gold Rush tough pants.",q:"Who suggested adding copper rivets?",a:["Levi Strauss","Jacob Davis","A miner"],c:1},
+  {book:1,story:5,title:"Who Invented Ice Cream?",summary:"From Persian snow to hand-crank.",q:"Who invented the hand-crank machine?",a:["Nancy Johnson","Marco Polo","A French king"],c:0},
+  {book:1,story:6,title:"The Amazing Journey of Paper",summary:"Cai Lun’s clever mush.",q:"What did Cai Lun mix for paper?",a:["Tree bark, rags & fishing nets","Bamboo only","Silk"],c:0},
+  {book:1,story:7,title:"The Surprise Story of Chocolate",summary:"Bitter Aztec drink → sweet bars.",q:"What did Aztecs call their drink?",a:["Xocolātl (bitter water)","Cacao latte","Sweet gold"],c:0},
+  {book:1,story:8,title:"Why Do We Have Umbrellas?",summary:"Started as sunshades.",q:"'Umbrella' originally meant?",a:["Little rain shield","Little shade","Wind catcher"],c:1},
+  {book:1,story:9,title:"The Secret Life of the Toothbrush",summary:"From chew sticks to nylon.",q:"Ancient people first used?",a:["Chew sticks from twigs","Soap","Magic spells"],c:0},
+  {book:1,story:10,title:"Where Did Bubblegum Come From?",summary:"Failed rubber experiment.",q:"What sap was used for gum?",a:["Chicle from sapodilla tree","Pine resin","Maple syrup"],c:0},
+
+  // ==================== BOOK 2 ====================
+  {book:2,story:1,title:"Why Is the Wheel Round?",summary:"Rolling logs changed everything.",q:"First wheels were made from?",a:["Tree trunk slices","Metal rings","Square stones"],c:0},
+  {book:2,story:2,title:"Who Invented the Zipper?",summary:"Many tries to perfect it.",q:"Who perfected the modern zipper?",a:["Whitcomb Judson","Gideon Sundback","Levi Strauss"],c:1},
+  {book:2,story:3,title:"The Story of Velcro",summary:"Burrs on a dog walk.",q:"What inspired Velcro?",a:["Burrs on dog fur","Broken zippers","Sticky glue"],c:0},
+  {book:2,story:4,title:"The Bicycle’s Wild Ride",summary:"From penny-farthing to safety bike.",q:"What made cycling safe?",a:["Safety bicycle with equal wheels","Penny-farthing","Hobby horse"],c:0},
+  {book:2,story:5,title:"How Did the Sailboat Change the World?",summary:"Triangular sails opened exploration.",q:"What sail let ships sail against wind?",a:["Lateen triangular sail","Square sail","Big engine"],c:0},
+  {book:2,story:6,title:"The Magic of the Compass",summary:"Lodestone always points north.",q:"First used by which civilization?",a:["Ancient China","Vikings","Egyptians"],c:0},
+  {book:2,story:7,title:"Why Do Shoes Have Laces?",summary:"From vines to adjustable fit.",q:"Laces help shoes do what?",a:["Stay snug and adjustable","Look pretty","Make noise"],c:0},
+  {book:2,story:8,title:"The Roller Skate Adventure",summary:"From violin crash to disco.",q:"Who first tried roller skates?",a:["Joseph Merlin","Gideon Sundback","Sylvan Goldman"],c:0},
+  {book:2,story:9,title:"How Balloons Took to the Sky",summary:"Hot air lifted the first passengers.",q:"First balloon passengers were?",a:["Sheep, duck, rooster","Two brothers","Only people"],c:0},
+  {book:2,story:10,title:"The Curious Case of the Shopping Cart",summary:"Folding chair + wheels.",q:"Who invented the shopping cart?",a:["Sylvan Goldman","Levi Strauss","Thomas Edison"],c:0},
+
+  // ==================== BOOK 3 ====================
+  {book:3,story:1,title:"Where Did the Light Bulb Really Come From?",summary:"Team effort turned night into day.",q:"Light bulb success came from?",a:["Edison alone","A whole team","Magic"],c:1},
+  {book:3,story:2,title:"The Story of the Telephone",summary:"Bell’s famous shout.",q:"First words on telephone?",a:["Mr. Watson, come here","Hello world","Help!"],c:0},
+  {book:3,story:3,title:"How Books Changed Everything",summary:"Gutenberg’s printing press.",q:"Printing press made books?",a:["Cheaper and faster","More expensive","Only for kings"],c:0},
+  {book:3,story:4,title:"The Radio’s Invisible Waves",summary:"Marconi’s magic air waves.",q:"Radio uses what to travel?",a:["Invisible electromagnetic waves","Long wires","Magic"],c:0},
+  {book:3,story:5,title:"Why Do We Have Clocks?",summary:"From sundials to atomic time.",q:"Pendulum made clocks?",a:["Much more accurate","Louder","Colorful"],c:0},
+  {book:3,story:6,title:"The Camera’s Eye",summary:"Freezing memories forever.",q:"Kodak slogan was?",a:["You press the button, we do the rest","Smile!","Click"],c:0},
+  {book:3,story:7,title:"The Incredible Journey of Glass",summary:"Sand + heat = magic.",q:"Fibre optic glass carries?",a:["Internet at light speed","Water","Electricity only"],c:0},
+  {book:3,story:8,title:"How Did Postage Stamps Stick the World Together?",summary:"Penny Black revolution.",q:"First stamp showed?",a:["Queen Victoria","A lion","An eagle"],c:0},
+  {book:3,story:9,title:"The Story of Sand",summary:"Tiny grains, huge impact.",q:"Silicon from sand makes?",a:["Computer chips","Glass","Both"],c:2},
+  {book:3,story:10,title:"The Magic of Light",summary:"From fire to LEDs.",q:"LED bulbs are better because?",a:["Use less power and last longer","Are heavier","Cost more"],c:0},
+
+  // ==================== BOOK 4: Wonders of the Natural World ====================
+  {book:4,story:1,title:"The Story of Rain",summary:"Water cycle adventure.",q:"Rain happens when clouds do what?",a:["Become too heavy with water","Get angry","Magic happens"],c:0},
+  {book:4,story:2,title:"Why Do Leaves Change Color?",summary:"Autumn magic.",q:"Leaves change color because they stop making?",a:["Chlorophyll","Water","Sugar"],c:0},
+  {book:4,story:3,title:"The Secret Life of Trees",summary:"Giant breathing friends.",q:"Trees give us what?",a:["Oxygen","Carbon dioxide","Nothing"],c:0},
+  {book:4,story:4,title:"The Story of Flowers",summary:"Nature’s colorful advertisements.",q:"Flowers help plants do what?",a:["Reproduce with pollen","Hide from animals","Make food"],c:0},
+  {book:4,story:5,title:"The Magic of Mountains",summary:"Earth’s tall wonders.",q:"Mountains are formed by?",a:["Moving tectonic plates","Giant hands","Volcanoes only"],c:0},
+  {book:4,story:6,title:"Rivers and Their Journey",summary:"From mountain to sea.",q:"Rivers shape the land by?",a:["Erosion","Magic","Staying still"],c:0},
+  {book:4,story:7,title:"The Wonder of Clouds",summary:"Sky storytellers.",q:"Clouds are made of?",a:["Tiny water droplets","Cotton candy","Bird feathers"],c:0},
+  {book:4,story:8,title:"The Power of Wind",summary:"Invisible force.",q:"Wind is caused by?",a:["Air moving from hot to cold areas","Magic spells","Bird wings"],c:0},
+  {book:4,story:9,title:"The Story of Snow",summary:"Frozen wonder.",q:"Snowflakes always have how many sides?",a:["6 sides","4 sides","8 sides"],c:0},
+  {book:4,story:10,title:"The Water Cycle",summary:"Earth’s endless adventure.",q:"The water cycle is powered by?",a:["The sun","The moon","Magic"],c:0},
+
+  // ==================== BOOK 5: Amazing Animals ====================
+  {book:5,story:1,title:"The Story of Dogs",summary:"From wolves to best friends.",q:"Dogs evolved from?",a:["Wolves","Cats","Birds"],c:0},
+  {book:5,story:2,title:"Why Do Cats Purr?",summary:"Happy vibrations.",q:"Cats purr when they are?",a:["Happy or healing","Only angry","Only sleeping"],c:0},
+  {book:5,story:3,title:"The Amazing Ant",summary:"Tiny but powerful.",q:"Ants can lift how many times their weight?",a:["50 times","5 times","500 times"],c:0},
+  {book:5,story:4,title:"Butterflies and Metamorphosis",summary:"Nature’s magic transformation.",q:"Caterpillar turns into?",a:["Butterfly","Bird","Flower"],c:0},
+  {book:5,story:5,title:"The Secret Life of Bees",summary:"Nature’s busy workers.",q:"Bees make honey from?",a:["Flower nectar","Tree sap","Magic"],c:0},
+  {book:5,story:6,title:"Penguins and Their Adventures",summary:"Tuxedo birds.",q:"Penguins live mostly in?",a:["Antarctica","Deserts","Jungles"],c:0},
+  {book:5,story:7,title:"The Giraffe’s Long Neck",summary:"Nature’s tallest animal.",q:"Giraffes use long necks to?",a:["Reach high leaves","Fight only","Swim"],c:0},
+  {book:5,story:8,title:"Octopuses - Masters of Camouflage",summary:"Eight-armed geniuses.",q:"Octopuses can change?",a:["Color and shape","Only color","Only size"],c:0},
+  {book:5,story:9,title:"The Story of Elephants",summary:"Gentle giants.",q:"Elephants use their trunks for?",a:["Drinking, smelling, and lifting","Only eating","Flying"],c:0},
+  {book:5,story:10,title:"Why Do Birds Sing?",summary:"Nature’s morning concert.",q:"Birds sing mainly to?",a:["Attract mates and defend territory","Scare enemies","Make music"],c:0},
+
+  // ==================== BOOK 6: Rocks, Minerals & Gems ====================
+  {book:6,story:1,title:"The Story of Sand",summary:"From rocks to beaches and chips.",q:"Silicon from sand is used to make?",a:["Computer chips","Glass","Both"],c:2},
+  {book:6,story:2,title:"Why Diamonds Sparkle",summary:"Born deep in the Earth.",q:"Diamonds are made from?",a:["Carbon under pressure","Magic","Gold"],c:0},
+  {book:6,story:3,title:"How Fossils Tell Tales",summary:"Nature’s time capsules.",q:"Fossils are formed when?",a:["Plants/animals are buried quickly","Magic happens","Rocks melt"],c:0},
+  {book:6,story:4,title:"The Magic of Clay",summary:"From mud to pots.",q:"Clay becomes hard when?",a:["Baked in fire","Mixed with water","Left in sun"],c:0},
+  {book:6,story:5,title:"The Secret Life of Soil",summary:"Living ground.",q:"Healthy soil contains?",a:["Millions of tiny creatures","Only dirt","Magic"],c:0},
+  {book:6,story:6,title:"Seashells and Their Ocean Homes",summary:"Nature’s armour.",q:"Seashells are made by?",a:["Sea creatures","Waves","Magic"],c:0},
+  {book:6,story:7,title:"The Rainbow in Rocks – Quartz",summary:"Hidden rainbows.",q:"Quartz is used in?",a:["Watches and electronics","Jewelry only","Food"],c:0},
+  {book:6,story:8,title:"Why Gold Has Always Been Special",summary:"Never rusts.",q:"Gold is valuable because it?",a:["Never tarnishes","Is heavy","Is colorful"],c:0},
+  {book:6,story:9,title:"The Journey of a Pebble",summary:"Patient journey.",q:"Pebbles become smooth by?",a:["River water erosion","Magic","Wind only"],c:0},
+  {book:6,story:10,title:"Volcanoes and New Rocks",summary:"Earth’s fire builders.",q:"Volcanoes create new?",a:["Land and rocks","Water","Trees"],c:0},
+
+  // ==================== BOOK 7: Food & Kitchen ====================
+  {book:7,story:1,title:"The Journey of Bread",summary:"From wild wheat to toast.",q:"Bread has been made for over?",a:["10,000 years","100 years","1,000 years"],c:0},
+  {book:7,story:2,title:"The Secret Life of Milk",summary:"Milk’s delicious transformations.",q:"One cow can fill how many bathtubs with milk?",a:["Over 200","Over 20","Over 2000"],c:0},
+  {book:7,story:3,title:"How Honey Is Made",summary:"Bees turn flowers into gold.",q:"Honey never does what?",a:["Spoils","Tastes sweet","Comes from bees"],c:0},
+  {book:7,story:4,title:"The Story of Rice",summary:"Feeding half the world.",q:"Rice feeds over how many people?",a:["3.5 billion","1 billion","500 million"],c:0},
+  {book:7,story:5,title:"Why Salt Is So Special",summary:"Preserver and flavour.",q:"Roman soldiers were sometimes paid in?",a:["Salt","Gold","Bread"],c:0},
+  {book:7,story:6,title:"The Sweet Story of Sugar",summary:"From sugarcane to treats.",q:"Sugar was once called?",a:["White gold","Brown magic","Sweet dirt"],c:0},
+  {book:7,story:7,title:"The Magic of Eggs",summary:"Nature’s perfect package.",q:"One hen can lay over how many eggs a year?",a:["300","30","3000"],c:0},
+  {book:7,story:8,title:"How Butter and Cheese Are Made",summary:"Milk’s transformations.",q:"There are over how many kinds of cheese?",a:["2,000","200","20"],c:0},
+  {book:7,story:9,title:"The Incredible Journey of the Banana",summary:"From jungle to lunchbox.",q:"Bananas are picked?",a:["Green and ripen on the way","Ripe","Never"],c:0},
+  {book:7,story:10,title:"The Story of Tea and Coffee",summary:"Morning drinks that changed the world.",q:"Tea is the most popular drink after?",a:["Water","Coffee","Juice"],c:0},
+
+  // ==================== BOOK 8: Toys, Games & Play ====================
+  {book:8,story:1,title:"The Story of the Ball",summary:"Oldest toy.",q:"Oldest balls found are over how old?",a:["3,000 years","300 years","30,000 years"],c:0},
+  {book:8,story:2,title:"How Dolls Became Friends",summary:"Practice caring.",q:"Dolls have been found in graves over how old?",a:["4,000 years","400 years","40 years"],c:0},
+  {book:8,story:3,title:"The Magic of Kites",summary:"Flying without wings.",q:"First kites were invented in?",a:["Ancient China","Modern America","Egypt"],c:0},
+  {book:8,story:4,title:"Why Swings and See-Saws Are Fun",summary:"Balance and joy.",q:"See-saws teach?",a:["Taking turns and balance","Flying","Swimming"],c:0},
+  {book:8,story:5,title:"The Story of Marbles",summary:"Colourful treasures.",q:"Marbles games teach?",a:["Aiming and patience","Flying","Cooking"],c:0},
+  {book:8,story:6,title:"How Building Blocks Teach Us",summary:"From wood to LEGO.",q:"LEGO brick invented in?",a:["1958","1858","2008"],c:0},
+  {book:8,story:7,title:"The Jump Rope Adventure",summary:"Rhythm and rhymes.",q:"Jump rope improves?",a:["Coordination and fitness","Only singing","Flying"],c:0},
+  {book:8,story:8,title:"The Secret of the Yo-Yo",summary:"Ancient toy.",q:"Yo-yo is over how old?",a:["3,000 years","300 years","30 years"],c:0},
+  {book:8,story:9,title:"Board Games History",summary:"From Senet to Monopoly.",q:"Oldest board games are over how old?",a:["5,000 years","500 years","50 years"],c:0},
+  {book:8,story:10,title:"The Story of Bubbles",summary:"Simple joy.",q:"Biggest soap bubble was over how long?",a:["100 metres","10 metres","1 metre"],c:0},
+
+  // ==================== BOOK 9: Shapes (Grand Finale) ====================
+  {book:9,story:1,title:"Why Is the Wheel Round?",summary:"Circle power.",q:"Circles help things do what?",a:["Roll smoothly","Stay still","Fly"],c:0},
+  {book:9,story:2,title:"The Story of the Cube",summary:"Strong and stackable.",q:"Cubes are good for?",a:["Building and stacking","Rolling","Flying"],c:0},
+  {book:9,story:3,title:"The Magic of the Sphere",summary:"Nature’s rolling shape.",q:"Balls and planets are?",a:["Spheres","Cubes","Pyramids"],c:0},
+  {book:9,story:4,title:"Why Pyramids Stand Strong",summary:"Ancient wonders.",q:"Pyramids are strong because of?",a:["Weight distribution","Magic","Color"],c:0},
+  {book:9,story:5,title:"The Cylinder’s Useful Shape",summary:"Strong and rolling.",q:"Cans and pillars are?",a:["Cylinders","Spheres","Cubes"],c:0},
+  {book:9,story:6,title:"The Cone’s Pointy Adventure",summary:"Ice cream and party hats.",q:"Ice cream cone invented at?",a:["1904 World’s Fair","1804","2004"],c:0},
+  {book:9,story:7,title:"The Hidden Power of the Prism",summary:"Rainbows inside.",q:"Prism splits light into?",a:["Rainbow colors","Darkness","One color"],c:0},
+  {book:9,story:8,title:"Special Shapes",summary:"Octahedron and dodecahedron.",q:"D12 dice are used in?",a:["Role-playing games","Only board games","Cards"],c:0},
+  {book:9,story:9,title:"How Shapes Help Us Build",summary:"Architecture basics.",q:"Triangles make structures?",a:["Very strong","Weak","Round"],c:0},
+  {book:9,story:10,title:"The Shape of Ideas",summary:"Everything is made of shapes.",q:"The world is built from?",a:["Basic shapes","Magic only","One shape"],c:0}
+];
+
+
+    let progress = JSON.parse(localStorage.getItem('curioPyramid')) || {};
+
+    function saveProgress() { localStorage.setItem('curioPyramid', JSON.stringify(progress)); }
+    function totalCompleted() { return Object.values(progress).reduce((a,b)=>a+b,0); }
+
+    function playCorrectSound() {
+      const audio = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audio.createOscillator(); osc.frequency.value = 800; osc.connect(audio.destination);
+      osc.start(); osc.stop(audio.currentTime + 0.15);
+    }
+
+    function launchConfetti() { confetti({particleCount:200, spread:80, origin:{y:0.6}}); }
+
+    // FIXED PYRAMID - Now supports 90 pyramids (13 rows)
+    function renderPyramid() {
+      let html = `<div class="pyramid">`;
+      let count = 0;
+      const done = totalCompleted();
+      for (let r = 1; r <= 13; r++) {
+        const itemsInRow = r < 7 ? r : 13;   // Wider base
+        html += `<div class="row">`;
+        for (let i = 0; i < itemsInRow; i++) {
+          if (count >= 90) break;
+          const filled = count < done ? 'completed' : '';
+          html += `<div class="small-pyramid ${filled}">${count < done ? '★' : ''}</div>`;
+          count++;
+        }
+        html += `</div>`;
+        if (count >= 90) break;
+      }
+      html += `</div><p style="font-size:1.4rem"><strong>${done}/90</strong> Emerald Pyramids Built!</p>`;
+      return html;
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById('bgMusic');
+      music.paused ? music.play() : music.pause();
+    }
+
+    function showHome() {
+      const done = totalCompleted();
+      let html = `<h2>Welcome back, explorer! 👋</h2>${renderPyramid()}`;
+      if (done === 90) html += `<button onclick="showCertificate()" style="background:#4caf50;font-size:1.3rem;">🏆 Claim Certificate!</button>`;
+      html += `<button onclick="showBooks()" style="font-size:1.2rem;padding:16px;">📚 Choose a Book</button>
+               <button onclick="resetProgress()" style="background:#f44336;">Reset Pyramid</button>`;
+      document.getElementById('app').innerHTML = html;
+    }
+
+    function showBooks() { /* same as before */ 
+      let html = `<h2>Choose Your Adventure Book</h2>`;
+      const titles = ["Wonders of Everyday Life","Secrets of How Things Move","Magic of Light, Sound & Ideas","Wonders of the Natural World","Amazing Animals We Know","Secrets of Rocks, Minerals & Gems","Food & Kitchen Wonders","Toys, Games & Play","Shapes (Grand Finale)"];
+      for (let b = 1; b <= 9; b++) {
+        const done = progress[b] || 0;
+        html += `<button onclick="startBook(${b})" style="width:100%;margin:10px 0;text-align:left;">
+          Book ${b}: ${titles[b-1]}<br><small>${done}/10 completed</small>
+        </button>`;
+      }
+      html += `<button onclick="showHome()">← Back Home</button>`;
+      document.getElementById('app').innerHTML = html;
+    }
+
+    function startBook(bookId) {
+      const qList = allQuestions.filter(q => q.book === bookId);
+      const next = (progress[bookId] || 0) + 1;
+      if (next > 10) { alert("🌟 Book Complete!"); showHome(); return; }
+      const q = qList[next-1];
+
+      let html = `
+        <div class="question">
+          <h3>Book ${bookId} • Story ${next}/10</h3>
+          <h2>${q.title}</h2>
+          <div class="summary">${q.summary}</div>
+          <p><strong>${q.q}</strong></p>
+          <div class="options">
+            ${q.a.map((opt,i) => `<button onclick="answer(${bookId},${next},${i},${q.c})">${String.fromCharCode(65+i)}. ${opt}</button>`).join('')}
+          </div>
+        </div>
+        <button onclick="showBooks()">← Back to Books</button>`;
+      document.getElementById('app').innerHTML = html;
+    }
+
+    function answer(bookId, storyNum, chosen, correct) {
+      if (!progress[bookId]) progress[bookId] = 0;
+      if (chosen === correct) {
+        progress[bookId]++;
+        saveProgress();
+        playCorrectSound();
+        launchConfetti();
+        alert("🎉 Correct! +1 Emerald Pyramid!");
+      } else {
+        alert("Nice try! Keep exploring ❤️");
+      }
+      if (progress[bookId] === 10) launchConfetti();
+      showHome();
+    }
+
+    function showCertificate() {
+      document.getElementById('app').innerHTML = `
+        <div style="text-align:center;background:white;padding:40px;border:10px solid gold;border-radius:20px;max-width:600px;margin:40px auto;">
+          <h1>🏆 Certificate of Wonder 🏆</h1>
+          <p>You completed all 90 stories and built the Great Pyramid!</p>
+          <h2>You are an Official Curio Explorer!</h2>
+          <button onclick="window.print()">🖨️ Print Certificate</button>
+        </div>
+        <button onclick="showHome()">← Back</button>`;
+    }
+
+    function resetProgress() {
+      if (confirm("Reset the entire pyramid?")) {
+        progress = {};
+        localStorage.removeItem('curioPyramid');
+        showHome();
+      }
+    }
+
+    // Start
+    showHome();
+  </script>
+</body>
+</html>
